@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "193257205730",
+    "project_id": "mobilenc-197ea",
+    "storage_bucket": "mobilenc-197ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193257205730:android:9e52bbfa5281c6661313bb",
+        "android_client_info": {
+          "package_name": "com.example.tuan5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7IVqAKPigdsntbltHjatse5UT9qm-yuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193257205730:android:c99a80ac2deb45321313bb",
+        "android_client_info": {
+          "package_name": "com.vtramsac.mobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7IVqAKPigdsntbltHjatse5UT9qm-yuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
