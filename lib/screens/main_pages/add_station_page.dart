@@ -4,7 +4,11 @@ import '../../services/geocoding_service.dart';
 import '../../services/station_repository.dart';
 
 class AddStationPage extends StatefulWidget {
-  const AddStationPage({super.key});
+  const AddStationPage({super.key, this.lookupAddress});
+
+  /// Optional injection point for deterministic integration tests.
+  /// Production uses GeocodingService when null.
+  final Future<GeocodeResult?> Function(String query)? lookupAddress;
 
   @override
   State<AddStationPage> createState() => _AddStationPageState();
@@ -50,7 +54,8 @@ class _AddStationPageState extends State<AddStationPage> {
       final city = _cityController.text.trim();
       final query = '$address, $city';
 
-      final result = await GeocodingService.instance.lookup(query);
+      final result = await (widget.lookupAddress?.call(query) ??
+          GeocodingService.instance.lookup(query));
 
       if (result == null) {
         if (!mounted) return;

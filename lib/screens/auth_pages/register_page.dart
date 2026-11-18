@@ -37,67 +37,68 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-Future<void> register() async {
-  if (!_formKey.currentState!.validate()) return;
+  Future<void> register() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  if (!agree) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please agree to the Terms")),
+    if (!agree) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please agree to the Terms")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    UserModel user = UserModel(
+      fullName: fullNameController.text.trim(),
+      email: emailController.text.trim(),
+      phone: phoneController.text.trim(),
+      password: passwordController.text.trim(),
+      avatar: avatarController.text.trim(),
+      gender: gender,
+      city: city,
     );
-    return;
+
+    bool success = await AuthService.register(user);
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (success) {
+      fullNameController.clear();
+      emailController.clear();
+      phoneController.clear();
+      passwordController.clear();
+
+      avatarController.text = "https://i.pravatar.cc/300";
+
+      gender = "Male";
+      city = "Ho Chi Minh";
+      agree = false;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Register Success"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AuthService.lastError ?? "Register Failed"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  setState(() {
-    isLoading = true;
-  });
-
-  UserModel user = UserModel(
-    fullName: fullNameController.text.trim(),
-    email: emailController.text.trim(),
-    phone: phoneController.text.trim(),
-    password: passwordController.text.trim(),
-    avatar: avatarController.text.trim(),
-    gender: gender,
-    city: city,
-  );
-
-  bool success = await AuthService.register(user);
-
-  if (!mounted) return;
-
-  setState(() {
-    isLoading = false;
-  });
-
-  if (success) {
-    fullNameController.clear();
-    emailController.clear();
-    phoneController.clear();
-    passwordController.clear();
-
-    avatarController.text = "https://i.pravatar.cc/300";
-
-    gender = "Male";
-    city = "Ho Chi Minh";
-    agree = false;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Register Success"),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    Navigator.pop(context, true);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AuthService.lastError ?? "Register Failed"),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,8 +133,9 @@ Future<void> register() async {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  validator: (value) =>
-                      value!.isEmpty ? "Enter Full Name" : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? "Enter Full Name"
+                      : null,
                 ),
 
                 const SizedBox(height: 15),
@@ -167,7 +169,15 @@ Future<void> register() async {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  validator: (value) => value!.isEmpty ? "Enter Phone" : null,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Enter Phone";
+                    }
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+                      return "Invalid Phone";
+                    }
+                    return null;
+                  },
                 ),
 
                 const SizedBox(height: 15),
@@ -336,3 +346,4 @@ Future<void> register() async {
     );
   }
 }
+
